@@ -1,0 +1,29 @@
+<section class="card shadow-sm mb-4">
+  <div class="card-header bg-white"><strong>Scan QR code invité</strong></div>
+  <div class="card-body">
+    <p class="text-secondary">Le lien du QR code doit contenir l’UID de l’invité (ex: <code>?uid=ABC123</code>).</p>
+
+    <video #scannerVideo class="w-100 rounded border mb-3" style="max-height: 320px; object-fit: cover;" muted playsinline></video>
+
+    <div class="d-flex gap-2 mb-3">
+      <button class="btn btn-success" [disabled]="isScanning || isSubmitting" (click)="startScan(scannerVideo)">Démarrer scan</button>
+      <button class="btn btn-outline-secondary" [disabled]="!isScanning" (click)="stopScan()">Arrêter</button>
+    </div>
+
+    <hr>
+
+    <div class="row g-2 align-items-end">
+      <div class="col-md-10">
+        <label class="form-label">Lien QR (manuel)</label>
+        <input class="form-control" [(ngModel)]="manualLink" placeholder="https://monsite/checkin?uid=ABC123">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" [disabled]="isSubmitting" (click)="submitManualLink()">Valider</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="alert alert-info" *ngIf="scanMessage">{{ scanMessage }}</div>
+<div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+<div class="alert alert-success" *ngIf="result">Check-in OK: <strong>{{ result.name }}</strong> (UID {{ result.uid }})</div>
