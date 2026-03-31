@@ -1,0 +1,25 @@
+<section class="card shadow-sm mb-4">
+  <div class="card-header bg-white"><strong>Créer une cérémonie</strong></div>
+  <div class="card-body row g-2">
+    <div class="col-md-6"><input class="form-control" [(ngModel)]="form.title" placeholder="Titre"></div>
+    <div class="col-md-3"><input class="form-control" type="date" [(ngModel)]="form.date"></div>
+    <div class="col-md-3"><input class="form-control" type="number" [(ngModel)]="form.guestCount" min="1" placeholder="Invités"></div>
+    <div class="col-md-3"><input class="form-control" type="time" [(ngModel)]="form.startTime"></div>
+    <div class="col-md-3"><input class="form-control" type="time" [(ngModel)]="form.endTime"></div>
+    <div class="col-md-6"><input class="form-control" [(ngModel)]="form.location" placeholder="Lieu"></div>
+    <div class="col-12">
+      <button class="btn btn-primary" (click)="createCeremony()">Enregistrer</button>
+    </div>
+  </div>
+</section>
+
+<section class="card shadow-sm">
+  <div class="card-header bg-white"><strong>Liste des cérémonies</strong></div>
+  <ul class="list-group list-group-flush" *ngIf="!loading">
+    <li class="list-group-item" *ngFor="let ceremony of ceremonies">
+      <div class="fw-semibold">{{ ceremony.title }}</div>
+      <div class="small text-secondary">{{ ceremony.date }} · {{ ceremony.startTime }} - {{ ceremony.endTime }} · {{ ceremony.location }}</div>
+    </li>
+  </ul>
+  <div class="card-body" *ngIf="loading">Chargement...</div>
+</section>

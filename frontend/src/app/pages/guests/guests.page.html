@@ -1,0 +1,32 @@
+<section class="card shadow-sm mb-4">
+  <div class="card-header bg-white"><strong>Ajouter un invité</strong></div>
+  <div class="card-body row g-2">
+    <div class="col-md-4"><input class="form-control" [(ngModel)]="form.name" placeholder="Nom"></div>
+    <div class="col-md-2">
+      <select class="form-select" [(ngModel)]="form.type">
+        <option *ngFor="let type of types" [ngValue]="type">{{ type }}</option>
+      </select>
+    </div>
+    <div class="col-md-2"><input class="form-control" type="number" min="1" [(ngModel)]="form.seatCount" placeholder="Places"></div>
+    <div class="col-md-2"><input class="form-control" type="number" min="1" [(ngModel)]="form.ceremonyId" placeholder="ID cérémonie"></div>
+    <div class="col-md-2"><input class="form-control" [(ngModel)]="form.remarks" placeholder="Remarque"></div>
+    <div class="col-12"><button class="btn btn-primary" (click)="createGuest()">Enregistrer</button></div>
+  </div>
+</section>
+
+<section class="card shadow-sm">
+  <div class="card-header bg-white"><strong>Liste des invités</strong></div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Nom</th><th>Type</th><th>UID</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let guest of guests">
+          <td>{{ guest.name }}</td>
+          <td>{{ guest.type }}</td>
+          <td><code>{{ guest.uid }}</code></td>
+          <td><span class="badge" [class.text-bg-success]="guest.status === 'PRESENT'" [class.text-bg-secondary]="guest.status !== 'PRESENT'">{{ guest.status }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

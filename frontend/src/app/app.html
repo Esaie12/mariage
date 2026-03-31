@@ -3,85 +3,16 @@
     <h1 class="h4 mb-4">Mariage Admin</h1>
 
     <nav class="nav nav-pills flex-column gap-2">
-      <a class="nav-link active" href="#tableau-bord">Tableau de bord</a>
-      <a class="nav-link" href="#ceremonies">Cérémonies</a>
-      <a class="nav-link" href="#invites">Invités</a>
-      <a class="nav-link" href="#checkin">Check-in</a>
-      <a class="nav-link" href="#parametres">Paramètres</a>
+      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Tableau de bord</a>
+      <a class="nav-link" routerLink="/ceremonies" routerLinkActive="active">Cérémonies</a>
+      <a class="nav-link" routerLink="/guests" routerLinkActive="active">Invités</a>
+      <a class="nav-link" routerLink="/check-in" routerLinkActive="active">Check-in</a>
     </nav>
 
-    <div class="mt-auto pt-4 text-white-50 small">
-      Backend connecté à vos modules métiers.
-    </div>
+    <div class="mt-auto pt-4 text-white-50 small">Frontend connecté aux controllers NestJS.</div>
   </aside>
 
   <main class="content flex-grow-1 p-4 bg-body-tertiary">
-    <section id="tableau-bord" class="mb-4">
-      <h2 class="h3">Tableau de bord</h2>
-      <p class="text-secondary mb-0">
-        Interface front générée à partir des domaines backend: cérémonies, invités et check-in.
-      </p>
-    </section>
-
-    <section class="row g-3 mb-4">
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h3 class="h6 text-uppercase text-secondary">Cérémonies</h3>
-            <p class="display-6 mb-0">12</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h3 class="h6 text-uppercase text-secondary">Invités</h3>
-            <p class="display-6 mb-0">248</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h3 class="h6 text-uppercase text-secondary">Check-in</h3>
-            <p class="display-6 mb-0">186</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="ceremonies" class="card shadow-sm mb-3">
-      <div class="card-header bg-white">
-        <strong>Dernières cérémonies</strong>
-      </div>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between">
-          <span>Cérémonie civile</span><span class="badge text-bg-success">Confirmée</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <span>Réception</span><span class="badge text-bg-warning">En préparation</span>
-        </li>
-      </ul>
-    </section>
-
-    <section id="invites" class="card shadow-sm mb-3">
-      <div class="card-header bg-white">
-        <strong>Invités à surveiller</strong>
-      </div>
-      <div class="card-body">
-        <p class="mb-0 text-secondary">5 invités en attente de réponse RSVP.</p>
-      </div>
-    </section>
-
-    <section id="checkin" class="card shadow-sm" >
-      <div class="card-header bg-white">
-        <strong>Suivi check-in</strong>
-      </div>
-      <div class="card-body">
-        <div class="progress" role="progressbar" aria-label="Check-in global" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-          <div class="progress-bar" style="width: 75%">75%</div>
-        </div>
-      </div>
-    </section>
+    <router-outlet></router-outlet>
   </main>
 </div>
