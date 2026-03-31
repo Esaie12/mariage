@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GuestStatus {
+  PENDING
+  PRESENT
+}
+
+enum GuestType {
+  Homme
+  Femme
+  Famille
+  Groupe
+}
+
+model Ceremony {
+  id         Int      @id @default(autoincrement())
+  title      String
+  date       String
+  startTime  String
+  endTime    String
+  location   String
+  guestCount Int
+  guests     Guest[]
+}
+
+model Guest {
+  id         Int         @id @default(autoincrement())
+  name       String
+  type       GuestType
+  seatCount  Int
+  uid        String      @unique
+  ceremonyId Int
+  status     GuestStatus @default(PENDING)
+  arrivalTime DateTime?
+  remarks    String?
+
+  ceremony Ceremony @relation(fields: [ceremonyId], references: [id], onDelete: Cascade)
+
+  @@index([uid])
+}
