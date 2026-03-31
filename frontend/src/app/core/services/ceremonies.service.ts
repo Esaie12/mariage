@@ -16,4 +16,12 @@ export class CeremoniesService {
   create(payload: Omit<Ceremony, 'id'>): Observable<Ceremony> {
     return this.http.post<Ceremony>(this.baseUrl, payload);
   }
+
+  update(id: number, payload: Omit<Ceremony, 'id'>): Observable<Ceremony> {
+    return this.http.patch<Ceremony>(`${this.baseUrl}/${id}`, payload);
+  }
+
+  remove(id: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/${id}`);
+  }
 }

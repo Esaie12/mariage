@@ -29,5 +29,10 @@
   .sidebar {
     width: 100%;
     min-height: auto;
+    display: none !important;
+  }
+
+  .app-shell.menu-open .sidebar {
+    display: flex !important;
   }
 }
