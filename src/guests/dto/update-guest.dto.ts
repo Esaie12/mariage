@@ -4,7 +4,6 @@ export class UpdateGuestDto implements Partial<CreateGuestDto> {
   name?: string;
   type?: CreateGuestDto['type'];
   seatCount?: number;
-  uid?: string;
   ceremonyId?: number;
   remarks?: string;
 }

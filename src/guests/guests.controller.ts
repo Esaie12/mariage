@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,7 +8,10 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { GuestsService } from './guests.service';
 import { CreateGuestDto } from './dto/create-guest.dto';
 import { UpdateGuestDto } from './dto/update-guest.dto';
@@ -19,6 +23,19 @@ export class GuestsController {
   @Post()
   create(@Body() createGuestDto: CreateGuestDto) {
     return this.guestsService.create(createGuestDto);
+  }
+
+  @Post('/import/:ceremonyId')
+  @UseInterceptors(FileInterceptor('file'))
+  importGuests(
+    @Param('ceremonyId', ParseIntPipe) ceremonyId: number,
+    @UploadedFile() file: { buffer: Buffer } | undefined,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Le fichier est obligatoire');
+    }
+
+    return this.guestsService.importFromCsv(ceremonyId, file.buffer);
   }
 
   @Get()

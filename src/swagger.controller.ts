@@ -236,7 +236,6 @@ export class SwaggerController {
                         name: 'Mr et Mme HOUSSA',
                         type: 'Famille',
                         seatCount: 3,
-                        uid: 'ABC123',
                         ceremonyId: 1,
                         remarks: 'VIP',
                       },
@@ -255,6 +254,69 @@ export class SwaggerController {
                 },
               },
               '409': { description: 'UID déjà utilisé' },
+            },
+          },
+        },
+
+        '/guests/import/{ceremonyId}': {
+          post: {
+            tags: ['Guests'],
+            summary: 'Importer des invités (CSV export Excel)',
+            description:
+              'Import en masse avec colonnes: nom, type, nombre de place. UID généré automatiquement.',
+            parameters: [
+              {
+                name: 'ceremonyId',
+                in: 'path',
+                required: true,
+                schema: { type: 'integer' },
+                example: 1,
+              },
+            ],
+            requestBody: {
+              required: true,
+              content: {
+                'multipart/form-data': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      file: { type: 'string', format: 'binary' },
+                    },
+                    required: ['file'],
+                  },
+                },
+              },
+            },
+            responses: {
+              '201': {
+                description: 'Invités importés',
+                content: {
+                  'application/json': {
+                    examples: {
+                      exemple1: {
+                        value: {
+                          importedCount: 2,
+                          guests: [
+                            {
+                              name: 'Moussa Diabi',
+                              type: 'Homme',
+                              seatCount: 1,
+                              uid: 'A1B2C3D4E5',
+                            },
+                            {
+                              name: 'Mr et Mme Houssa',
+                              type: 'Famille',
+                              seatCount: 3,
+                              uid: 'F6G7H8I9J0',
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              '400': { description: 'Fichier invalide / format incorrect' },
             },
           },
         },
@@ -413,7 +475,7 @@ export class SwaggerController {
           },
           CreateGuestDto: {
             type: 'object',
-            required: ['name', 'type', 'seatCount', 'uid', 'ceremonyId'],
+            required: ['name', 'type', 'seatCount', 'ceremonyId'],
             properties: {
               name: { type: 'string', example: 'MOUSSA DIABI' },
               type: {
@@ -422,7 +484,6 @@ export class SwaggerController {
                 example: 'Homme',
               },
               seatCount: { type: 'integer', example: 1 },
-              uid: { type: 'string', example: 'MOUSSA-001' },
               ceremonyId: { type: 'integer', example: 1 },
               remarks: {
                 type: 'string',
