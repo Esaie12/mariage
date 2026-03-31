@@ -4,10 +4,8 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
-type ApiDocsResponse = {
-  endpoints: {
-    checkIn: string[];
-  };
+type OpenApiDoc = {
+  paths: Record<string, unknown>;
 };
 
 describe('Wedding API (e2e)', () => {
@@ -22,12 +20,21 @@ describe('Wedding API (e2e)', () => {
     await app.init();
   });
 
+  it('/api-json (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/api-json')
+      .expect(200)
+      .expect((res: { body: OpenApiDoc }) => {
+        expect(res.body.paths['/check-in']).toBeDefined();
+      });
+  });
+
   it('/api (GET)', () => {
     return request(app.getHttpServer())
       .get('/api')
       .expect(200)
-      .expect((res: { body: ApiDocsResponse }) => {
-        expect(res.body.endpoints.checkIn).toContain('POST /check-in');
+      .expect((res) => {
+        expect(res.text).toContain('SwaggerUIBundle');
       });
   });
 
