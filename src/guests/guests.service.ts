@@ -3,48 +3,47 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DataStoreService } from '../data-store.service';
 import { GuestStatus } from '../common/enums/guest-status.enum';
+import { PrismaService } from '../prisma/prisma.service';
 import { Guest } from './guest.entity';
 import { CreateGuestDto } from './dto/create-guest.dto';
 import { UpdateGuestDto } from './dto/update-guest.dto';
 
 @Injectable()
 export class GuestsService {
-  constructor(private readonly store: DataStoreService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   create(createGuestDto: CreateGuestDto) {
-    const ceremony = this.store.ceremonies.find(
-      (item) => item.id === createGuestDto.ceremonyId,
-    );
+    const ceremony = this.prisma.ceremony.findUnique({
+      where: { id: createGuestDto.ceremonyId },
+    });
     if (!ceremony) {
       throw new NotFoundException('Cérémonie introuvable');
     }
 
-    const existing = this.store.guests.find(
-      (item) => item.uid === createGuestDto.uid,
-    );
+    const existing = this.prisma.guest.findUnique({
+      where: { uid: createGuestDto.uid },
+    });
     if (existing) {
       throw new ConflictException('UID déjà utilisé');
     }
 
-    const guest: Guest = {
-      id: this.store.guestIdSeq++,
-      ...createGuestDto,
-      status: GuestStatus.PENDING,
-      arrivalTime: null,
-      remarks: createGuestDto.remarks ?? null,
-    };
-    this.store.guests.push(guest);
-    return guest;
+    return this.prisma.guest.create({
+      data: {
+        ...createGuestDto,
+        status: GuestStatus.PENDING,
+        arrivalTime: null,
+        remarks: createGuestDto.remarks ?? null,
+      },
+    });
   }
 
   findAll() {
-    return this.store.guests;
+    return this.prisma.guest.findMany();
   }
 
   findOne(id: number) {
-    const guest = this.store.guests.find((item) => item.id === id);
+    const guest = this.prisma.guest.findUnique({ where: { id } });
     if (!guest) {
       throw new NotFoundException('Invité introuvable');
     }
@@ -55,38 +54,37 @@ export class GuestsService {
     const guest = this.findOne(id);
 
     if (updateGuestDto.uid && updateGuestDto.uid !== guest.uid) {
-      const existing = this.store.guests.find(
-        (item) => item.uid === updateGuestDto.uid && item.id !== id,
-      );
-      if (existing) {
+      const existing = this.prisma.guest.findUnique({
+        where: { uid: updateGuestDto.uid },
+      });
+      if (existing && existing.id !== id) {
         throw new ConflictException('UID déjà utilisé');
       }
     }
 
     if (updateGuestDto.ceremonyId) {
-      const ceremony = this.store.ceremonies.find(
-        (item) => item.id === updateGuestDto.ceremonyId,
-      );
+      const ceremony = this.prisma.ceremony.findUnique({
+        where: { id: updateGuestDto.ceremonyId },
+      });
       if (!ceremony) {
         throw new NotFoundException('Cérémonie introuvable');
       }
     }
 
-    Object.assign(guest, updateGuestDto);
-    return guest;
+    return this.prisma.guest.update({ where: { id }, data: updateGuestDto });
   }
 
   remove(id: number) {
     this.findOne(id);
-    this.store.guests = this.store.guests.filter((item) => item.id !== id);
+    this.prisma.guest.delete({ where: { id } });
     return { message: 'Invité supprimé' };
   }
 
   findByUid(uid: string) {
-    return this.store.guests.find((item) => item.uid === uid) ?? null;
+    return this.prisma.guest.findUnique({ where: { uid } });
   }
 
   save(guest: Guest) {
-    return guest;
+    return this.prisma.guest.update({ where: { id: guest.id }, data: guest });
   }
 }
