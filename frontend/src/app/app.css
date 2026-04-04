@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.sidebar {
+  width: 280px;
+  min-height: 100vh;
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link:focus {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.content {
+  overflow-x: hidden;
+}
+
+@media (max-width: 991.98px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    display: none !important;
+  }
+
+  .app-shell.menu-open .sidebar {
+    display: flex !important;
+  }
+}
