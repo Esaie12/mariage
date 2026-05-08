@@ -5,58 +5,35 @@ import type { Response } from 'express';
 export class SwaggerController {
   @Get('api-json')
   getOpenApiDocument() {
-    const ceremonySchema = {
-      type: 'object',
-      properties: {
-        id: { type: 'integer', example: 1 },
-        title: { type: 'string', example: 'Mariage civil' },
-        date: { type: 'string', example: '2026-08-10' },
-        startTime: { type: 'string', example: '14:00' },
-        endTime: { type: 'string', example: '18:00' },
-        location: { type: 'string', example: 'Mairie de Paris' },
-        guestCount: { type: 'integer', example: 200 },
-      },
+    const ceremonyExample = {
+      id: 1,
+      title: 'Mariage civil',
+      date: '2026-08-10',
+      startTime: '14:00',
+      endTime: '18:00',
+      location: 'Mairie de Paris',
+      guestCount: 200,
     };
 
-    const guestSchema = {
-      type: 'object',
-      properties: {
-        id: { type: 'integer', example: 1 },
-        name: { type: 'string', example: 'Mr et Mme HOUSSA' },
-        type: {
-          type: 'string',
-          enum: ['Homme', 'Femme', 'Famille', 'Groupe'],
-          example: 'Famille',
-        },
-        seatCount: { type: 'integer', example: 3 },
-        uid: { type: 'string', example: 'ABC123' },
-        ceremonyId: { type: 'integer', example: 1 },
-        status: {
-          type: 'string',
-          enum: ['PENDING', 'PRESENT'],
-          example: 'PENDING',
-        },
-        arrivalTime: {
-          type: 'string',
-          format: 'date-time',
-          nullable: true,
-          example: '2026-08-10T14:12:00.000Z',
-        },
-        remarks: {
-          type: 'string',
-          nullable: true,
-          example: 'Arrivé avec 2 enfants',
-        },
-      },
+    const guestExample = {
+      id: 1,
+      name: 'Mr et Mme HOUSSA',
+      type: 'Famille',
+      seatCount: 3,
+      uid: 'ABC123XYZ9',
+      ceremonyId: 1,
+      status: 'PENDING',
+      arrivalTime: null,
+      remarks: 'Arrivé avec 2 enfants',
     };
 
     return {
       openapi: '3.0.0',
       info: {
         title: 'API Gestion de présence des invités',
-        version: '1.0.0',
+        version: '1.1.0',
         description:
-          'Documentation Swagger complète pour ceremonies, guests et check-in.',
+          'Documentation complète avec exemples de requêtes/réponses pour chaque endpoint.',
       },
       tags: [
         { name: 'Ceremonies', description: 'Gestion des cérémonies' },
@@ -77,6 +54,11 @@ export class SwaggerController {
                       type: 'array',
                       items: { $ref: '#/components/schemas/Ceremony' },
                     },
+                    examples: {
+                      succes: {
+                        value: [ceremonyExample],
+                      },
+                    },
                   },
                 },
               },
@@ -91,7 +73,7 @@ export class SwaggerController {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/CreateCeremonyDto' },
                   examples: {
-                    exemple1: {
+                    exemple: {
                       value: {
                         title: 'Réception de mariage',
                         date: '2026-08-10',
@@ -111,6 +93,9 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Ceremony' },
+                    examples: {
+                      succes: { value: { ...ceremonyExample, title: 'Réception de mariage' } },
+                    },
                   },
                 },
               },
@@ -136,6 +121,7 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Ceremony' },
+                    examples: { succes: { value: ceremonyExample } },
                   },
                 },
               },
@@ -160,7 +146,7 @@ export class SwaggerController {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/UpdateCeremonyDto' },
                   examples: {
-                    exemple1: {
+                    exemple: {
                       value: { location: 'Salle des Fêtes', guestCount: 350 },
                     },
                   },
@@ -173,6 +159,9 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Ceremony' },
+                    examples: {
+                      succes: { value: { ...ceremonyExample, location: 'Salle des Fêtes', guestCount: 350 } },
+                    },
                   },
                 },
               },
@@ -196,7 +185,7 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     examples: {
-                      exemple1: { value: { message: 'Cérémonie supprimée' } },
+                      succes: { value: { message: 'Cérémonie supprimée' } },
                     },
                   },
                 },
@@ -204,6 +193,7 @@ export class SwaggerController {
             },
           },
         },
+
         '/guests': {
           get: {
             tags: ['Guests'],
@@ -216,6 +206,11 @@ export class SwaggerController {
                     schema: {
                       type: 'array',
                       items: { $ref: '#/components/schemas/Guest' },
+                    },
+                    examples: {
+                      succes: {
+                        value: [guestExample],
+                      },
                     },
                   },
                 },
@@ -231,7 +226,7 @@ export class SwaggerController {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/CreateGuestDto' },
                   examples: {
-                    famille: {
+                    exemple: {
                       value: {
                         name: 'Mr et Mme HOUSSA',
                         type: 'Famille',
@@ -250,10 +245,12 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Guest' },
+                    examples: {
+                      succes: { value: guestExample },
+                    },
                   },
                 },
               },
-              '409': { description: 'UID déjà utilisé' },
             },
           },
         },
@@ -261,7 +258,7 @@ export class SwaggerController {
         '/guests/import/{ceremonyId}': {
           post: {
             tags: ['Guests'],
-            summary: 'Importer des invités (CSV export Excel)',
+            summary: 'Importer des invités (CSV)',
             description:
               'Import en masse avec colonnes: nom, type, nombre de place. UID généré automatiquement.',
             parameters: [
@@ -293,7 +290,7 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     examples: {
-                      exemple1: {
+                      succes: {
                         value: {
                           importedCount: 2,
                           guests: [
@@ -339,6 +336,7 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Guest' },
+                    examples: { succes: { value: guestExample } },
                   },
                 },
               },
@@ -363,7 +361,7 @@ export class SwaggerController {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/UpdateGuestDto' },
                   examples: {
-                    exemple1: {
+                    exemple: {
                       value: { seatCount: 4, remarks: 'Arrive tard' },
                     },
                   },
@@ -376,6 +374,9 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Guest' },
+                    examples: {
+                      succes: { value: { ...guestExample, seatCount: 4, remarks: 'Arrive tard' } },
+                    },
                   },
                 },
               },
@@ -399,7 +400,7 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     examples: {
-                      exemple1: { value: { message: 'Invité supprimé' } },
+                      succes: { value: { message: 'Invité supprimé' } },
                     },
                   },
                 },
@@ -407,6 +408,7 @@ export class SwaggerController {
             },
           },
         },
+
         '/check-in': {
           post: {
             tags: ['CheckIn'],
@@ -419,9 +421,9 @@ export class SwaggerController {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/CheckInDto' },
                   examples: {
-                    scanSimple: { value: { uid: 'ABC123' } },
+                    scanSimple: { value: { uid: 'ABC123XYZ9' } },
                     scanAvecRemarque: {
-                      value: { uid: 'ABC123', remarks: 'Présent, table 5' },
+                      value: { uid: 'ABC123XYZ9', remarks: 'Présent, table 5' },
                     },
                   },
                 },
@@ -433,6 +435,15 @@ export class SwaggerController {
                 content: {
                   'application/json': {
                     schema: { $ref: '#/components/schemas/Guest' },
+                    examples: {
+                      succes: {
+                        value: {
+                          ...guestExample,
+                          status: 'PRESENT',
+                          arrivalTime: '2026-08-10T14:12:00.000Z',
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -444,18 +455,52 @@ export class SwaggerController {
       },
       components: {
         schemas: {
-          Ceremony: ceremonySchema,
-          Guest: guestSchema,
+          Ceremony: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer', example: 1 },
+              title: { type: 'string', example: 'Mariage civil' },
+              date: { type: 'string', example: '2026-08-10' },
+              startTime: { type: 'string', example: '14:00' },
+              endTime: { type: 'string', example: '18:00' },
+              location: { type: 'string', example: 'Mairie de Paris' },
+              guestCount: { type: 'integer', example: 200 },
+            },
+          },
+          Guest: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer', example: 1 },
+              name: { type: 'string', example: 'Mr et Mme HOUSSA' },
+              type: {
+                type: 'string',
+                enum: ['Homme', 'Femme', 'Famille', 'Groupe'],
+                example: 'Famille',
+              },
+              seatCount: { type: 'integer', example: 3 },
+              uid: { type: 'string', example: 'ABC123XYZ9' },
+              ceremonyId: { type: 'integer', example: 1 },
+              status: {
+                type: 'string',
+                enum: ['PENDING', 'PRESENT'],
+                example: 'PENDING',
+              },
+              arrivalTime: {
+                type: 'string',
+                format: 'date-time',
+                nullable: true,
+                example: '2026-08-10T14:12:00.000Z',
+              },
+              remarks: {
+                type: 'string',
+                nullable: true,
+                example: 'Arrivé avec 2 enfants',
+              },
+            },
+          },
           CreateCeremonyDto: {
             type: 'object',
-            required: [
-              'title',
-              'date',
-              'startTime',
-              'endTime',
-              'location',
-              'guestCount',
-            ],
+            required: ['title', 'date', 'startTime', 'endTime', 'location', 'guestCount'],
             properties: {
               title: { type: 'string', example: 'Réception de mariage' },
               date: { type: 'string', example: '2026-08-10' },
@@ -485,11 +530,7 @@ export class SwaggerController {
               },
               seatCount: { type: 'integer', example: 1 },
               ceremonyId: { type: 'integer', example: 1 },
-              remarks: {
-                type: 'string',
-                nullable: true,
-                example: 'Famille proche',
-              },
+              remarks: { type: 'string', nullable: true, example: 'Famille proche' },
             },
           },
           UpdateGuestDto: {
@@ -504,12 +545,8 @@ export class SwaggerController {
             type: 'object',
             required: ['uid'],
             properties: {
-              uid: { type: 'string', example: 'ABC123' },
-              remarks: {
-                type: 'string',
-                nullable: true,
-                example: 'Arrivé à 15h10',
-              },
+              uid: { type: 'string', example: 'ABC123XYZ9' },
+              remarks: { type: 'string', nullable: true, example: 'Arrivé à 15h10' },
             },
           },
         },
@@ -533,6 +570,7 @@ export class SwaggerController {
       window.ui = SwaggerUIBundle({
         url: '/api-json',
         dom_id: '#swagger-ui',
+        tryItOutEnabled: true,
       });
     </script>
   </body>
