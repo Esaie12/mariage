@@ -126,24 +126,6 @@ export class GuestsPage implements OnInit {
     });
   }
 
-  async downloadGuestQr(guest: Guest): Promise<void> {
-    try {
-      const checkinLink = `${window.location.origin}/scan?uid=${encodeURIComponent(guest.uid)}`;
-      const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(checkinLink)}&size=400`;
-      const response = await fetch(qrUrl);
-      const blob = await response.blob();
-
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = `qrcode-${guest.uid}.png`;
-      link.click();
-      URL.revokeObjectURL(objectUrl);
-    } catch {
-      this.error = 'Impossible de télécharger le QR code.';
-    }
-  }
-
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] ?? null;

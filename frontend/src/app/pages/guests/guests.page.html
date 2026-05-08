@@ -68,7 +68,6 @@
           <td class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-primary" [disabled]="isSaving || isImporting" (click)="editGuest(guest)">Modifier</button>
             <button class="btn btn-sm btn-outline-danger" [disabled]="isSaving || isImporting" (click)="deleteGuest(guest.id)">Supprimer</button>
-            <button class="btn btn-sm btn-outline-success" [disabled]="isSaving || isImporting" (click)="downloadGuestQr(guest)">Télécharger QR</button>
           </td>
         </tr>
       </tbody>
