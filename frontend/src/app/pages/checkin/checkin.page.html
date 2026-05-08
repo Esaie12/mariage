@@ -1,0 +1,20 @@
+<section class="card shadow-sm">
+  <div class="card-header bg-white"><strong>Check-in invité</strong></div>
+  <div class="card-body row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">UID</label>
+      <input class="form-control" [(ngModel)]="uid" placeholder="Ex: ABC123XYZ">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Remarque</label>
+      <input class="form-control" [(ngModel)]="remarks" placeholder="Optionnel">
+    </div>
+    <div class="col-md-2"><button class="btn btn-success w-100" (click)="submit()">Valider</button></div>
+  </div>
+</section>
+
+<div class="alert alert-danger mt-3" *ngIf="error">{{ error }}</div>
+
+<div class="alert alert-success mt-3" *ngIf="result">
+  Invité validé: <strong>{{ result.name }}</strong> (UID {{ result.uid }})
+</div>

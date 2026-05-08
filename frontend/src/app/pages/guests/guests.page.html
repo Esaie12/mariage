@@ -1,0 +1,77 @@
+<section class="card shadow-sm mb-4">
+  <div class="card-header bg-white"><strong>{{ editingId ? 'Modifier' : 'Ajouter' }} un invité</strong></div>
+  <div class="card-body row g-2">
+    <div class="col-md-4">
+      <label class="form-label">Nom</label>
+      <input class="form-control" [(ngModel)]="form.name" placeholder="Nom">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Type</label>
+      <select class="form-select" [(ngModel)]="form.type">
+        <option *ngFor="let type of types" [ngValue]="type">{{ type }}</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Places</label>
+      <input class="form-control" type="number" min="1" [(ngModel)]="form.seatCount" placeholder="Places">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">ID cérémonie</label>
+      <input class="form-control" type="number" min="1" [(ngModel)]="form.ceremonyId" placeholder="ID cérémonie">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Remarque</label>
+      <input class="form-control" [(ngModel)]="form.remarks" placeholder="Remarque">
+    </div>
+    <div class="col-12 d-flex gap-2">
+      <button class="btn btn-primary" [disabled]="isSaving" (click)="saveGuest()">
+        {{ isSaving ? 'Enregistrement...' : (editingId ? 'Mettre à jour' : 'Enregistrer') }}
+      </button>
+      <button class="btn btn-outline-secondary" *ngIf="editingId" [disabled]="isSaving" (click)="resetForm()">Annuler</button>
+    </div>
+  </div>
+</section>
+
+<section class="card shadow-sm mb-4">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <strong>Importer des invités (CSV)</strong>
+    <a href="/templates/guest-import-model.csv" download class="btn btn-sm btn-outline-success">Télécharger le fichier modèle</a>
+  </div>
+  <div class="card-body row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label">ID cérémonie</label>
+      <input class="form-control" type="number" min="1" [(ngModel)]="importCeremonyId">
+    </div>
+    <div class="col-md-7">
+      <label class="form-label">Fichier CSV</label>
+      <input class="form-control" type="file" accept=".csv" (change)="onFileSelected($event)">
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-success w-100" [disabled]="isImporting" (click)="importCsv()">{{ isImporting ? 'Import...' : 'Importer' }}</button>
+    </div>
+  </div>
+</section>
+
+<div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+<section class="card shadow-sm">
+  <div class="card-header bg-white"><strong>Liste des invités</strong></div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Nom</th><th>Type</th><th>UID</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let guest of guests">
+          <td>{{ guest.name }}</td>
+          <td>{{ guest.type }}</td>
+          <td><code>{{ guest.uid }}</code></td>
+          <td><span class="badge" [class.text-bg-success]="guest.status === 'PRESENT'" [class.text-bg-secondary]="guest.status !== 'PRESENT'">{{ guest.status }}</span></td>
+          <td class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary" [disabled]="isSaving || isImporting" (click)="editGuest(guest)">Modifier</button>
+            <button class="btn btn-sm btn-outline-danger" [disabled]="isSaving || isImporting" (click)="deleteGuest(guest.id)">Supprimer</button>
+            <button class="btn btn-sm btn-outline-success" [disabled]="isSaving || isImporting" (click)="downloadGuestQr(guest)">Télécharger QR</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
